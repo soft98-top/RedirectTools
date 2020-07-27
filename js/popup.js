@@ -1,4 +1,4 @@
-//刷新函数，用于读取background页面中的变量，更新一个表格
+//refresh 刷新函数，用于读取background页面中的变量，更新一个表格
 function refresh(){
     clearTable();
     var bg = chrome.extension.getBackgroundPage();
@@ -8,17 +8,22 @@ function refresh(){
     console.log(rule);
     if(rule){
         for(var i = 0 ;i < rule.length;i++){
-            var str = "<tr><td><input class='url' type='text' value='"+rule[i].url+"'></td><td><input class='reUrl' type='text' value='"+rule[i].reUrl+"'></td><td><a href='javascript:void(0)' class='alter' id='"+(i+1000)+"'>修</a></td><td><a href='javascript:void(0)' class='delete' id='"+i+"'>删</a></td></tr>";
-            $("table").append(str);
+            var urlStr = "<td><input class='url' type='text' value='"+rule[i].url+"'></td>";
+            var reUrlStr = "<td><input class='reUrl' type='text' value='"+rule[i].reUrl+"'></td>";
+            var isEnableStr = "<td><input type='checkbox' "+rule[i].switch+"></td>"
+            var alterStr = "<td><a href='javascript:void(0)' class='alter' id='"+(i+1000)+"'>修</a></td>";
+            var deleteStr = "<td><a href='javascript:void(0)' class='delete' id='"+i+"'>删</a></td>";
+            var htmlStr = "<tr>"+urlStr+reUrlStr+isEnableStr+alterStr+deleteStr+"</tr>";
+            $("table").append(htmlStr);
         }
-        addDeleteEvent();
+        addDynamicEvent();
     }
 }
-//清空页面的表格
+//clearTable 清空页面的表格
 function clearTable(){
     $("#allreg").html("");
 }
-//检查添加的URL是否与现存的有重复
+//checkRepeat 检查添加的URL是否与现存的有重复
 function checkRepeat(url){
     var flag = true;
     $(".url").each(function(){
@@ -28,8 +33,9 @@ function checkRepeat(url){
     });
     return flag;
 }
-//addEvent 添加a标签事件监听
-function addDeleteEvent(){
+//addDynamicEvent 添加动态事件（当规则表格发生变化时，需要重新设置事件）
+// 目前有修改、删除、规则开关事件
+function addDynamicEvent(){
     $("a").on("click",function(){
         var id = $(this).attr("id");
         var type = $(this).attr("class");
@@ -44,6 +50,13 @@ function addDeleteEvent(){
             bg.deleteRule(id);
         }
         refresh();
+    });
+    $(":checkbox").on("click",function(){
+        var id = $(this).parent().parent().find("a.delete").attr("id");
+        var isEnable = this.checked;
+        console.log(id+" "+isEnable);
+        var bg = chrome.extension.getBackgroundPage();
+        bg.alterSwitch(id,isEnable);
     });
 }
 // 初始化按钮的点击事件
