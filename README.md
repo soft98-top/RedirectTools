@@ -1,5 +1,10 @@
 #WebSiteRedirect
 
+2020.07.29：
+
+- 新增了全局User-Agent切换，目前不支持自定义，目前内置chrome、Firefox、IPhone、Android
+- 界面布局用表格简单优化了一下
+
 2020.07.27：
 
 - 更新了规则格式，新增switch属性，用于判断当前规则是否开启。

@@ -11,17 +11,30 @@ function refresh(){
             var urlStr = "<td><input class='url' type='text' value='"+rule[i].url+"'></td>";
             var reUrlStr = "<td><input class='reUrl' type='text' value='"+rule[i].reUrl+"'></td>";
             var isEnableStr = "<td><input type='checkbox' "+rule[i].switch+"></td>"
-            var alterStr = "<td><a href='javascript:void(0)' class='alter' id='"+(i+1000)+"'>修</a></td>";
+            var alterStr = "<td><a href='javascript:void(0)' class='alter' id='"+(i+1000)+"'>改</a></td>";
             var deleteStr = "<td><a href='javascript:void(0)' class='delete' id='"+i+"'>删</a></td>";
             var htmlStr = "<tr>"+urlStr+reUrlStr+isEnableStr+alterStr+deleteStr+"</tr>";
-            $("table").append(htmlStr);
+            $("#allRule").append(htmlStr);
         }
         addDynamicEvent();
     }
 }
 //clearTable 清空页面的表格
 function clearTable(){
-    $("#allreg").html("");
+    $("#allRule").html("");
+}
+//initAgent 初始化同步Agent
+function initAgent(){
+    var bg = chrome.extension.getBackgroundPage();
+    var agentStorage = bg.agentStorage;
+    var currentAgent = bg.currentAgent;
+    var str = "";
+    agentStorage.agents.forEach(element => {
+        str += "<option id='"+element.name+"' class='switchAgent' value='"+element.name+"'>"+element.name+"</option>";
+    });
+    $("#agent").append(str);
+    $("#"+currentAgent).attr("selected","selected")
+
 }
 //checkRepeat 检查添加的URL是否与现存的有重复
 function checkRepeat(url){
@@ -81,4 +94,11 @@ $(function(){
         refresh();
     })
     refresh();
+    initAgent();
+    $("#agent").change(function(){
+        var bg = chrome.extension.getBackgroundPage();
+        var newAgent = $(this).val();
+        console.log(newAgent);
+        bg.updateAgent(newAgent);
+    });
 });
