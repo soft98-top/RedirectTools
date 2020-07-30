@@ -39,6 +39,9 @@ function initAgent(){
 //checkRepeat 检查添加的URL是否与现存的有重复
 function checkRepeat(url){
     var flag = true;
+    if(url==null || url==""){
+        flag = false;
+    }
     $(".url").each(function(){
         if($(this).val() == url){
             flag = false
@@ -80,9 +83,11 @@ $(function(){
         var reUrl = $("#reUrl").val();
         if(checkRepeat(url)){
             bg.addRule(url,reUrl);
+            $("#url").val("");
+            $("#reUrl").val("");
             refresh();
         }else{
-            alert("URL重复！");
+            alert("URL重复或输入为空值！");
         }
     });
     $("#refresh").click(function(){

@@ -1,7 +1,7 @@
 {
     "manifest_version":2,
     "name":"WebSiteRedirect",
-    "version":"0.0.2",
+    "version":"1.0.0",
     "description":"网址重定向",
     "icons":{
         "16":"img/icon.png",
@@ -24,7 +24,7 @@
         }
     ],
     "permissions":[
-        "contextMenux",
+        "contextMenus",
         "tabs",
         "notifications",
         "webRequest",

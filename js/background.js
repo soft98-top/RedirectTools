@@ -123,3 +123,17 @@ chrome.webRequest.onBeforeSendHeaders.addListener(details => {
         }
     }
 }, {urls: ["<all_urls>"]}, ["blocking","requestHeaders"]);
+
+//添加右键菜单将当前页添加到规则，在弹出框中输入重定向后的网址
+chrome.contextMenus.create({
+    "type":"normal",
+    "title":"将当前页添加到规则",
+    "contexts":["page"],
+    "onclick":function(params){
+        var url = params.pageUrl;
+        var reUrl = prompt("请输入重定向后的网址：");
+        if(reUrl != null){
+            addRule(url,reUrl);
+        }
+    }
+});
