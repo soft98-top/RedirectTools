@@ -11,6 +11,7 @@ var agentStorage = { "agents":
 }
 var currentAgent = "默认";
 var globalAgent = "";
+var globalProxy = "";
 //updateAgent 更新Agent函数，有传参就设置为新的头，没有就获取storage中存储的值
 function updateAgent(newAgent){
     if(newAgent){
@@ -92,9 +93,37 @@ function alterSwitch(id,isEnable){
     }
     globalStorage.allRule[id].switch = switchStr;
 }
+// 设置或取消代理
+function switchProxy(proxyUrl){
+    if(proxyUrl){
+        var config = {
+            mode:"pac_script",
+            pacScript:{
+                data:"function FindProxyForURL(url,host){\n"
+                    +"return '" + proxyUrl + "';\n"
+                    +"}"
+            }
+        };
+        chrome.proxy.settings.set({value:config,scope:"regular"},function(){});
+    }else{
+        chrome.proxy.settings.clear({scope:"regular"},function(){});
+    }
+}
+function updateProxy(proxyUrl){
+    if(proxyUrl){
+        chrome.storage.sync.set({"proxyUrl":proxyUrl},function(){
+            globalProxy = proxyUrl;
+        });
+    }else{
+        chrome.storage.sync.get({"proxyUrl":""},function(item){
+            globalProxy = item.proxyUrl;
+        });
+    }
+}
 // 用来初始化更新全局存储变量
 updateStorage();
 updateAgent();
+updateProxy();
 //监听网页请求，读取本地存储信息，判断请求网页与添加的规则是否相匹配，相符就重定向为指定网址
 chrome.webRequest.onBeforeRequest.addListener(details => {
     var Rules = globalStorage;
@@ -135,5 +164,26 @@ chrome.contextMenus.create({
         if(reUrl != null){
             addRule(url,reUrl);
         }
+    }
+});
+
+chrome.contextMenus.create({
+    "type":"normal",
+    "title":"设置代理",
+    "contexts":["page"],
+    "onclick":function(){
+        var proxyUrl = prompt("请输入要设置的代理：",globalProxy);
+        if(proxyUrl != null){
+            switchProxy(proxyUrl);
+            updateProxy(proxyUrl);
+        }
+    }
+});
+chrome.contextMenus.create({
+    "type":"normal",
+    "title":"取消代理",
+    "contexts":["page"],
+    "onclick":function(){
+        switchProxy();
     }
 });

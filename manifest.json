@@ -24,6 +24,7 @@
         }
     ],
     "permissions":[
+        "proxy",
         "contextMenus",
         "tabs",
         "notifications",
