@@ -109,6 +109,7 @@ function switchProxy(proxyUrl){
         chrome.proxy.settings.clear({scope:"regular"},function(){});
     }
 }
+// 存储代理信息
 function updateProxy(proxyUrl){
     if(proxyUrl){
         chrome.storage.sync.set({"proxyUrl":proxyUrl},function(){
@@ -119,6 +120,22 @@ function updateProxy(proxyUrl){
             globalProxy = item.proxyUrl;
         });
     }
+}
+// 通过连接更新SRC规则
+function updateByLink(targetUrl){
+    $.ajax({
+        type:"get",
+        url:targetUrl,
+        dataType:"json",
+        success:function(res){
+            var allRule = res.allRule;
+            console.log(allRule);
+            for(i=0;i<allRule.length;i++){
+                globalStorage.allRule.push(allRule[i]);
+            }
+            updateStorage(globalStorage);
+        }
+    });
 }
 // 用来初始化更新全局存储变量
 updateStorage();

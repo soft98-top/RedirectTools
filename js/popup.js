@@ -106,4 +106,10 @@ $(function(){
         console.log(newAgent);
         bg.updateAgent(newAgent);
     });
+    $("#updateByLink").click(function(){
+        var bg = chrome.extension.getBackgroundPage();
+        var link = $("#link").val();
+        bg.updateByLink(link);
+        $("#link").val("");
+    })
 });

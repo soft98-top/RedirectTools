@@ -1,5 +1,29 @@
 #WebSiteRedirect
 
+2020.08.09：
+
+- 新增通过链接添加规则。
+
+- 可以自己写一个文件上传到服务器，只要返回的数据格式满足给出的标准，就可以添加成功。
+
+  - ```   json
+    {
+        "allRule":[
+            {
+                "url":"https://www.google.com/",
+                "reUrl":"https://www.baidu.com/",
+                "switch":"checked"
+            },{
+                "url":"https://www.youtube.com/",
+                "reUrl":"https://www.baidu.com/",
+                "switch":"checked"
+            }
+        ]
+    }
+    ```
+
++ url 为被重定向的网址，reUrl为重定向之后的网址，switch有两个值，checked表示开启规则，unchecked表示不开启规则。
+
 2020.07.31：
 
 - 新增设置代理功能，在任意页面右键，在[WebSiteRedirect]菜单下会有设置代理和取消代理。
