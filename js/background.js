@@ -150,7 +150,16 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
             if(rule[i].switch == "checked"){
                 if(details.url == rule[i].url){
                     console.log(details.url);
-                    return {redirectUrl:rule[i].reUrl};
+                    var reData = rule[i].reUrl;
+                    if(reData.startsWith("json:")||reData.startsWith("json：")){
+                        reData = reData.replace("json:","");
+                        reData = reData.replace("json：","");
+                        return {redirectUrl: "data:application/json;charset=UTF-8;base64," + Base64.encode(reData)};
+                    }
+                    if(reData.startsWith("http:")||reData.startsWith("https:")){
+                        return {redirectUrl:rule[i].reUrl};
+                    }
+                    console.log(reData);
                 }
             }
         }
