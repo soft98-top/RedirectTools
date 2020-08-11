@@ -45,6 +45,7 @@ function updateStorage(newStorage){
             console.log(JSON.stringify(items.allRule));
             globalStorage = items;
             console.log("get"+JSON.stringify(globalStorage));
+            updateJSDataArray(items);
         });
         if(globalStorage.allRule == "[Object Object]"){
             var arr = [];
@@ -137,6 +138,47 @@ function updateByLink(targetUrl){
         }
     });
 }
+// js文件数据存储变量
+var jsData = [];
+// 根据下标对jsData进行赋值
+function updateJSData(index,res){
+    console.log(jsData);
+    jsData[index] = res;
+    console.log(jsData);
+}
+// 更新js文件数据的启动函数，目前是在获取规则之后调用
+function updateJSDataArray(items){
+    while(jsData > 0){
+        jsData.pop();
+    }
+    if(items.allRule != null){
+        var rule = items.allRule;
+        console.log(rule);
+        for(var i=0;i<rule.length;i++){
+            if(rule[i].reUrl.startsWith("js:")||rule[i].reUrl.startsWith("js：")){
+                jsUrl = rule[i].reUrl.replace("js:","");
+                jsUrl = jsUrl.replace("js：","");
+                jsData.push("");
+                ajaxRequest(i,jsUrl);
+            }else{
+                jsData.push("");
+            }
+        }
+    }
+}
+// 异步请求js文件
+function ajaxRequest(index,targetUrl){
+    $.ajax({
+        type:"GET",
+        url:targetUrl,
+        success:function(res){
+            updateJSData(index,res);
+        },
+        error:function(res){
+            console.log(res);
+        }
+    });
+}
 // 用来初始化更新全局存储变量
 updateStorage();
 updateAgent();
@@ -155,6 +197,9 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
                         reData = reData.replace("json:","");
                         reData = reData.replace("json：","");
                         return {redirectUrl: "data:application/json;charset=UTF-8;base64," + Base64.encode(reData)};
+                    }
+                    if(reData.startsWith("js:")||reData.startsWith("js：")){
+                        return {redirectUrl:"data:text/javascript;charset=UTF-8;base64," + Base64.encode(jsData[i])};
                     }
                     if(reData.startsWith("http:")||reData.startsWith("https:")){
                         return {redirectUrl:rule[i].reUrl};
