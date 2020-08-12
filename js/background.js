@@ -38,7 +38,7 @@ function updateAgent(newAgent){
 function updateStorage(newStorage){
     if(newStorage){
         chrome.storage.sync.set(newStorage,function(){
-            updateStorage();
+            updateJSDataArray(newStorage);
         });
     }else{
         chrome.storage.sync.get({allRule:""},function(items){
@@ -148,18 +148,24 @@ function updateJSData(index,res){
 }
 // 更新js文件数据的启动函数，目前是在获取规则之后调用
 function updateJSDataArray(items){
-    while(jsData > 0){
+    while(jsData.length > 0){
         jsData.pop();
     }
     if(items.allRule != null){
         var rule = items.allRule;
         console.log(rule);
         for(var i=0;i<rule.length;i++){
-            if(rule[i].reUrl.startsWith("js:")||rule[i].reUrl.startsWith("js：")){
+            if(rule[i].reUrl.startsWith("js:")||rule[i].reUrl.startsWith("js：")||rule[i].reUrl.startsWith("jsonf:")||rule[i].reUrl.startsWith("jsonf：")){
                 jsUrl = rule[i].reUrl.replace("js:","");
                 jsUrl = jsUrl.replace("js：","");
+                jsUrl = jsUrl.replace("jsonf:","");
+                jsUrl = jsUrl.replace("jsonf：","");
                 jsData.push("");
                 ajaxRequest(i,jsUrl);
+            }else if(rule[i].reUrl.startsWith("json:")||rule[i].reUrl.startsWith("json：")){
+                jsonData = rule[i].reUrl.replace("json:","");
+                jsonData = jsonData.replace("json：","");
+                updateJSData(i,jsonData);
             }else{
                 jsData.push("");
             }
@@ -194,9 +200,10 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
                     console.log(details.url);
                     var reData = rule[i].reUrl;
                     if(reData.startsWith("json:")||reData.startsWith("json：")){
-                        reData = reData.replace("json:","");
-                        reData = reData.replace("json：","");
-                        return {redirectUrl: "data:application/json;charset=UTF-8;base64," + Base64.encode(reData)};
+                        return {redirectUrl: "data:application/json;charset=UTF-8;base64," + Base64.encode(jsData[i])};
+                    }
+                    if(reData.startsWith("jsonf:")||reData.startsWith("jsonf：")){
+                        return {redirectUrl:"data:application/json;charset=UTF-8;base64," + Base64.encode(jsData[i])}
                     }
                     if(reData.startsWith("js:")||reData.startsWith("js：")){
                         return {redirectUrl:"data:text/javascript;charset=UTF-8;base64," + Base64.encode(jsData[i])};
