@@ -1,4 +1,27 @@
-#WebSiteRedirect
+## RedirectTools
+
+2020.08.23:
+
+- 版本更新为1.2.0，软件重命名为RedirectTools
+
+- 新增代理选择框，全局代理开关（代理旁边的选择框，选中即为全局代理，否则为gfw模式）
+
+- 更新通过链接增加代理（建议自己在编写时加上一个无代理的代理，proxyUrl为noproxy即可）
+
+  - ```json
+    {
+      "proxies":[
+        {
+          "name":"noProxy",
+          "proxyUrl":"noproxy"
+        },
+        {
+          "name":"local1080",
+          "proxyUrl":"PROXY 127.0.0.1:1080"
+        }
+      ]
+    }
+    ```
 
 2020.08.12：
 

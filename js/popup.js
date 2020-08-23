@@ -6,6 +6,7 @@ function refresh(){
     console.log(globalStorage);
     rule = globalStorage.allRule;
     console.log(rule);
+    proxies = globalStorage.proxies;
     if(rule){
         for(var i = 0 ;i < rule.length;i++){
             var urlStr = "<td><input class='url' type='text' value='"+rule[i].url+"'></td>";
@@ -18,10 +19,28 @@ function refresh(){
         }
         addDynamicEvent();
     }
+    var proxyUrl = bg.globalProxy;
+    if(proxies){
+        for(var i = 0 ;i < proxies.length;i++){
+            var str = "";
+            if(proxies[i].proxyUrl == proxyUrl){
+                str += "<option id='"+proxies[i].name+"' class='switchProxy' value='"+proxies[i].name+"' selected='selected'>"+proxies[i].name+"</option>";
+            }else{
+                str += "<option id='"+proxies[i].name+"' class='switchProxy' value='"+proxies[i].name+"'>"+proxies[i].name+"</option>";
+            }
+            $("#proxy").append(str);
+        }
+    }
+    var proxyWay = bg.proxyWay;
+    $("#proxyWay").val(proxyWay);
+    if(proxyWay == "global"){
+        $("#proxyWay").attr("checked","checked");
+    }
 }
 //clearTable 清空页面的表格
 function clearTable(){
     $("#allRule").html("");
+    $("#proxy").html("");
 }
 //initAgent 初始化同步Agent
 function initAgent(){
@@ -67,12 +86,19 @@ function addDynamicEvent(){
         }
         refresh();
     });
-    $(":checkbox").on("click",function(){
+    $("#allRule :checkbox").on("click",function(){
         var id = $(this).parent().parent().find("a.delete").attr("id");
         var isEnable = this.checked;
         console.log(id+" "+isEnable);
         var bg = chrome.extension.getBackgroundPage();
         bg.alterSwitch(id,isEnable);
+    });
+    $("#proxy").change(function(){
+        var bg = chrome.extension.getBackgroundPage();
+        var proxyName = $(this).val();
+        var way = $("proxyWay").val();
+        console.log(proxyName);
+        bg.popupSwitchProxy(proxyName,way);
     });
 }
 // 初始化按钮的点击事件
@@ -112,4 +138,16 @@ $(function(){
         bg.updateByLink(link);
         $("#link").val("");
     })
+    $("#proxyWay").on("click",function(){
+        var way = $(this).val();
+        if(way == "pac"){
+            way = "global";
+        }else{
+            way = "pac";
+        }
+        $(this).val(way);
+        var bg = chrome.extension.getBackgroundPage();
+        var proxyName = $("#proxy").val();
+        bg.popupSwitchProxy(proxyName,way);
+    });
 });

@@ -41,7 +41,7 @@ function updateStorage(newStorage){
             updateJSDataArray(newStorage);
         });
     }else{
-        chrome.storage.sync.get({allRule:""},function(items){
+        chrome.storage.sync.get({allRule:[],proxies:[]},function(items){
             console.log(JSON.stringify(items.allRule));
             globalStorage = items;
             console.log("get"+JSON.stringify(globalStorage));
@@ -49,7 +49,7 @@ function updateStorage(newStorage){
         });
         if(globalStorage.allRule == "[Object Object]"){
             var arr = [];
-            globalStorage = {"allRule":arr};
+            globalStorage = {"allRule":arr,"proxies":[]};
             updateStorage(globalStorage);
         }
     }
@@ -76,7 +76,7 @@ function deleteRule(id){
         globalStorage.allRule.splice(id,1);
         updateStorage(globalStorage);
     }else{
-        globalStorage = {"allRule":[]};
+        globalStorage = {"allRule":[],"proxies":[]};
         updateStorage(globalStorage);
     }
 }
@@ -94,31 +94,86 @@ function alterSwitch(id,isEnable){
     }
     globalStorage.allRule[id].switch = switchStr;
 }
+// 获取gfwlist2pac
+var globalPac = "";
+function getGfwList2Pac(){
+    var gfwUrl = "https://raw.githubusercontent.com/petronny/gfwlist2pac/master/gfwlist.pac";
+    $.ajax({
+        type:"GET",
+        url:gfwUrl,
+        success:function(res){
+            globalPac = res;
+        }
+    });
+}
+var proxyWay = "";
 // 设置或取消代理
-function switchProxy(proxyUrl){
-    if(proxyUrl){
-        var config = {
-            mode:"pac_script",
-            pacScript:{
-                data:"function FindProxyForURL(url,host){\n"
-                    +"return '" + proxyUrl + "';\n"
-                    +"}"
-            }
-        };
+function switchProxy(proxyUrl,way){
+    if(proxyUrl&&proxyUrl!="noproxy"&&proxyUrl!=""){
+        var config = {};
+        if(way&&way=="pac"){
+            var tempProxy = globalPac.match(/var proxy = \'(.*)\'\;/)[1];
+            // console.log(tempProxy);
+            globalPac = globalPac.replace(tempProxy,proxyUrl);
+            // console.log(globalPac);
+            config = {
+                mode:"pac_script",
+                pacScript:{
+                    data:globalPac
+                }
+            };
+        }else if(way&&way=="global"){
+            config = {
+                mode:"pac_script",
+                pacScript:{
+                    data:"function FindProxyForURL(url,host){\n"
+                        +"return '" + proxyUrl + "';\n"
+                        +"}"
+                }
+            };
+        }else{
+            way = "pac";
+            var tempProxy = globalPac.match(/var proxy = \'(.*)\'\;/)[1];
+            // console.log(tempProxy);
+            globalPac = globalPac.replace(tempProxy,proxyUrl);
+            // console.log(globalPac);
+            config = {
+                mode:"pac_script",
+                pacScript:{
+                    data:globalPac
+                }
+            };
+        }
         chrome.proxy.settings.set({value:config,scope:"regular"},function(){});
+        updateProxy(proxyUrl,way);
     }else{
         chrome.proxy.settings.clear({scope:"regular"},function(){});
+        updateProxy(proxyUrl);
+    }
+}
+// popup设置代理
+function popupSwitchProxy(proxyName,way){
+    var proxies = globalStorage.proxies;
+    for(var i=0;i<proxies.length;i++){
+        if(proxies[i].name == proxyName){
+            switchProxy(proxies[i].proxyUrl,way);
+        }
     }
 }
 // 存储代理信息
-function updateProxy(proxyUrl){
+function updateProxy(proxyUrl,way){
     if(proxyUrl){
-        chrome.storage.sync.set({"proxyUrl":proxyUrl},function(){
+        if(!way){
+            way = "pac";
+        }
+        chrome.storage.sync.set({"proxyUrl":proxyUrl,"proxyWay":way},function(){
             globalProxy = proxyUrl;
+            proxyWay = way;
         });
     }else{
-        chrome.storage.sync.get({"proxyUrl":""},function(item){
+        chrome.storage.sync.get({"proxyUrl":"","proxyWay":"pac"},function(item){
             globalProxy = item.proxyUrl;
+            proxyWay = item.proxyWay;
         });
     }
 }
@@ -130,9 +185,19 @@ function updateByLink(targetUrl){
         dataType:"json",
         success:function(res){
             var allRule = res.allRule;
+            var proxies = res.proxies;
             console.log(allRule);
-            for(i=0;i<allRule.length;i++){
+            if(allRule){
+                for(i=0;i<allRule.length;i++){
                 globalStorage.allRule.push(allRule[i]);
+                }
+            }
+            if(proxies){
+                console.log(proxies)
+                var proxies = res.proxies;
+                for(i=0;i<proxies.length;i++){
+                    globalStorage.proxies.push(proxies[i]);
+                }
             }
             updateStorage(globalStorage);
         }
@@ -189,6 +254,7 @@ function ajaxRequest(index,targetUrl){
 updateStorage();
 updateAgent();
 updateProxy();
+getGfwList2Pac();
 //监听网页请求，读取本地存储信息，判断请求网页与添加的规则是否相匹配，相符就重定向为指定网址
 chrome.webRequest.onBeforeRequest.addListener(details => {
     var Rules = globalStorage;
@@ -253,7 +319,6 @@ chrome.contextMenus.create({
         var proxyUrl = prompt("请输入要设置的代理：",globalProxy);
         if(proxyUrl != null){
             switchProxy(proxyUrl);
-            updateProxy(proxyUrl);
         }
     }
 });
