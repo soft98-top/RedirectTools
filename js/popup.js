@@ -43,6 +43,12 @@ var Events = {
             var way = $("proxyWay").val();
             Events.bg.ProxyObj.switchByName(proxyName,way);
         });
+        $("#proxy").dblclick(function(){
+            var id = $("#proxy :selected").attr("index");
+            Events.bg.ProxyObj.delete(id);
+            Events.bg.ProxyObj.switch("");
+            Events.refresh();
+        });
     },
     //页面内刷新事件
     refresh:function(){
@@ -58,7 +64,6 @@ var Events = {
                 var htmlStr = "<tr>"+urlStr+reUrlStr+isEnableStr+alterStr+deleteStr+"</tr>";
                 $("#allRule").append(htmlStr);
             }
-            this.addDynamicEvent();
         }
         var proxies = this.bg.StorageObj.globalStorage.proxies;
         var proxyUrl = this.bg.ProxyObj.proxyValue;
@@ -66,9 +71,9 @@ var Events = {
             for(var i = 0 ;i < proxies.length;i++){
                 var str = "";
                 if(proxies[i].proxyUrl == proxyUrl){
-                    str += "<option id='"+proxies[i].name+"' class='switchProxy' value='"+proxies[i].name+"' selected='selected'>"+proxies[i].name+"</option>";
+                    str += "<option id='"+proxies[i].name+"' index='"+i+"' class='switchProxy' value='"+proxies[i].name+"' selected='selected'>"+proxies[i].name+"</option>";
                 }else{
-                    str += "<option id='"+proxies[i].name+"' class='switchProxy' value='"+proxies[i].name+"'>"+proxies[i].name+"</option>";
+                    str += "<option id='"+proxies[i].name+"' index='"+i+"' class='switchProxy' value='"+proxies[i].name+"'>"+proxies[i].name+"</option>";
                 }
                 $("#proxy").append(str);
             }
@@ -78,6 +83,7 @@ var Events = {
         if(proxyWay == "global"){
             $("#proxyWay").attr("checked","checked");
         }
+        this.addDynamicEvent();
     },
     //审核添加的url是否重复
     checkRepeat:function(){
@@ -114,10 +120,14 @@ $(function(){
     $("#refresh").click(function(){
         Events.refresh();
     });
-    $("#clear").click(function(){
+    $("#clearRule").click(function(){
         Events.bg.RuleObj.clearRule();
         Events.refresh();
-    })
+    });
+    $("#clearProxy").click(function(){
+        Events.bg.ProxyObj.clear();
+        Events.refresh();
+    });
     $("#agent").change(function(){
         var newAgent = $(this).val();
         Events.bg.AgentObj.set(newAgent);

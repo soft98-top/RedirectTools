@@ -200,6 +200,11 @@ var ProxyObj = {
         this.proxyWay = StorageObj.globalStorage.proxyWay;
         this.getGfwList2Pac();
     },
+    clear:function(){
+        this.switch();
+        StorageObj.globalStorage.proxies = [];
+        StorageObj.set(StorageObj.globalStorage);
+    },
     //切换代理
     switch:function(proxyUrl,way){
         if(proxyUrl&&proxyUrl!="noproxy"&&proxyUrl!=""){
@@ -246,12 +251,19 @@ var ProxyObj = {
         $.ajax({
             type:"GET",
             url:gfwUrl,
+            dataType:"",
             success:function(res){
                 ProxyObj.pacValue = res;
                 ProxyObj.switch(ProxyObj.proxyValue,ProxyObj.proxyWay)
             }
         });
-    }
+    },
+    delete:function(id){
+        if(id != undefined){
+            StorageObj.globalStorage.proxies.splice(id,1);
+            StorageObj.set(StorageObj.globalStorage);
+        }
+    },
 }
 //------------------------------------------//
 //初始化
@@ -269,7 +281,12 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
         var rule = Rules.allRule;
         for(var i = 0;i<rule.length;i++){
             if(rule[i].switch == "checked"){
-                if(details.url == rule[i].url){
+                try {
+                    var reg = new RegExp(rule[i].url);
+                } catch (error) {
+                    reg = false;
+                }
+                if(details.url.startsWith(rule[i].url)||reg&&reg.test(details.url)){
                     var reData = rule[i].reUrl;
                     if(reData.startsWith("json:")||reData.startsWith("json：")){
                         return {redirectUrl: "data:application/json;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])};
