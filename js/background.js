@@ -13,11 +13,10 @@ var StorageObj = {
     },
     //从浏览器获取存取的数据
     get:function(){
-        chrome.storage.sync.get({allRule:[],proxies:[],agentName:"默认",proxyValue:"",proxyWay:""},function(items){
+        chrome.storage.sync.get({allRule:[],agentName:"默认"},function(items){
             StorageObj.globalStorage = items;
             RuleObj.updateRuleDataIndex(items);
             AgentObj.get();
-            ProxyObj.get();
         });
     }
 }
@@ -109,15 +108,9 @@ var LinkTool = {
     //通过json格式的数据更新规则
     updateByJson:function(data){
         var allRule = data.allRule;
-        var proxies = data.proxies;
         if(allRule){
             for(i=0;i<allRule.length;i++){
             StorageObj.globalStorage.allRule.push(allRule[i]);
-            }
-        }
-        if(proxies){
-            for(i=0;i<proxies.length;i++){
-                StorageObj.globalStorage.proxies.push(proxies[i]);
             }
         }
         StorageObj.set(StorageObj.globalStorage);
@@ -295,7 +288,7 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
                         return {redirectUrl:"data:application/json;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])}
                     }
                     if(reData.startsWith("js:")||reData.startsWith("js：")){
-                        return {redirectUrl:"data:text/javascript;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])};
+                        return {redirectUrl:"data:application/javascript;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])};
                     }
                     if(reData.startsWith("http:")||reData.startsWith("https:")){
                         return {redirectUrl:rule[i].reUrl};

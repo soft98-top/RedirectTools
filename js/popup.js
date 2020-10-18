@@ -38,17 +38,6 @@ var Events = {
             var isEnable = this.checked;
             Events.bg.RuleObj.alterSwitch(id,isEnable);
         });
-        $("#proxy").change(function(){
-            var proxyName = $(this).val();
-            var way = $("proxyWay").val();
-            Events.bg.ProxyObj.switchByName(proxyName,way);
-        });
-        $("#proxy").dblclick(function(){
-            var id = $("#proxy :selected").attr("index");
-            Events.bg.ProxyObj.delete(id);
-            Events.bg.ProxyObj.switch("");
-            Events.refresh();
-        });
     },
     //页面内刷新事件
     refresh:function(){
@@ -64,24 +53,6 @@ var Events = {
                 var htmlStr = "<tr>"+urlStr+reUrlStr+isEnableStr+alterStr+deleteStr+"</tr>";
                 $("#allRule").append(htmlStr);
             }
-        }
-        var proxies = this.bg.StorageObj.globalStorage.proxies;
-        var proxyUrl = this.bg.ProxyObj.proxyValue;
-        if(proxies){
-            for(var i = 0 ;i < proxies.length;i++){
-                var str = "";
-                if(proxies[i].proxyUrl == proxyUrl){
-                    str += "<option id='"+proxies[i].name+"' index='"+i+"' class='switchProxy' value='"+proxies[i].name+"' selected='selected'>"+proxies[i].name+"</option>";
-                }else{
-                    str += "<option id='"+proxies[i].name+"' index='"+i+"' class='switchProxy' value='"+proxies[i].name+"'>"+proxies[i].name+"</option>";
-                }
-                $("#proxy").append(str);
-            }
-        }
-        var proxyWay = this.bg.ProxyObj.proxyWay;
-        $("#proxyWay").val(proxyWay);
-        if(proxyWay == "global"){
-            $("#proxyWay").attr("checked","checked");
         }
         this.addDynamicEvent();
     },
@@ -124,10 +95,6 @@ $(function(){
         Events.bg.RuleObj.clearRule();
         Events.refresh();
     });
-    $("#clearProxy").click(function(){
-        Events.bg.ProxyObj.clear();
-        Events.refresh();
-    });
     $("#agent").change(function(){
         var newAgent = $(this).val();
         Events.bg.AgentObj.set(newAgent);
@@ -137,15 +104,4 @@ $(function(){
         Events.bg.LinkTool.updateByLink(link);
         $("#link").val("");
     })
-    $("#proxyWay").on("click",function(){
-        var way = $(this).val();
-        if(way == "pac"){
-            way = "global";
-        }else{
-            way = "pac";
-        }
-        $(this).val(way);
-        var proxyName = $("#proxy").val();
-        Events.bg.ProxyObj.switchByName(proxyName,way);
-    });
 });
