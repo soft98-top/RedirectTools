@@ -2,7 +2,7 @@
     "manifest_version":2,
     "name":"RedirectTools",
     "version":"1.3.2",
-    "description":"重定向综合工具-重定向，修改返回值，代理等",
+    "description":"重定向综合工具-重定向，修改返回值，UA等",
     "icons":{
         "16":"img/icon.png",
         "48":"img/icon.png",
@@ -16,12 +16,21 @@
         "default_title":"RedirectTools by Soft98",
         "default_popup":"popup.html"
     },
+    "options_ui":
+    {
+        "page": "options.html",
+        "chrome_style": true
+    },
     "content_scripts":[
         {
             "matches":["<all_urls>"],
             "js":["js/jquery-3.5.1.js"],
             "run_at":"document_start"
         }
+    ],
+    "omnibox": { "keyword" : "rt" },
+    "web_accessible_resources":[
+        "options.html"
     ],
     "permissions":[
         "contextMenus",

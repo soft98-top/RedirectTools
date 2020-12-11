@@ -332,3 +332,11 @@ chrome.contextMenus.create({
         }
     }
 });
+//------------------------------------------//
+//当输入关键字后，打开options页面
+//------------------------------------------//
+chrome.omnibox.onInputEntered.addListener((text) => {
+    chrome.tabs.create({"url":chrome.extension.getURL("options.html")},function(){
+        console.log("弹出页面");
+    });
+});
