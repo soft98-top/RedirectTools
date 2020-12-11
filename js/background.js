@@ -29,7 +29,7 @@ var RuleObj = {
     addRule:function(url,reUrl){
         var ruleJson = {"url":url,"reUrl":reUrl,"switch":"checked"};
         if(StorageObj.globalStorage.allRule != ""){
-            StorageObj.globalStorageallRule.push(ruleJson);
+            StorageObj.globalStorage.allRule.push(ruleJson);
         }else{
             StorageObj.globalStorage.allRule = [ruleJson];
         }
