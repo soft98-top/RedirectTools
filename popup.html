@@ -3,50 +3,25 @@
     <head>
         <title>Popup</title>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
         <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
         <script type="text/javascript" src="js/popup.js"></script>
+        <script type="text/javascript" src="js/bootstrap.bundle.js"></script>
+        <script type="text/javascript" src="js/bootstrap.js"></script>
     </head>
-    <body>
-        <center>
-            <h1>RedirectTools</h1>
-            <table id="allRule"></table>
-            <table>
-                <tr>
-                    <td style="white-space : nowrap">
-                        原网址:
-                    </td>
-                    <td colspan="2">
-                        <input type="text" id="url">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="white-space : nowrap">
-                        重定向:
-                    </td>
-                    <td colspan="2">
-                        <input type="text" id="reUrl">
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td colspan="3" style="white-space : nowrap">
-                        <button id="add">添加</button>
-                        <button id="refresh">刷新</button>
-                        <button id="clearRule">清空规则</button>
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td><button id="updateByLink">link</button></td>
-                    <td colspan="2">
-                        <input type="text" id="link">
-                    </td>
-                </tr>
-                <tr align="center">
-                    <td colspan="3">
-                        <select id="agent">
-                        </select>
-                    </td>
-                </tr>
-            </table>
-        </center>
+    <body style="width: 200px;">
+        <div>
+            <div class="row">
+                <div class="col">
+                    <form id="allRule"></form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <select class="form-control" id="ualist">
+                    </select>
+                </div>
+            </div>
+        </div>
     </body>
 </html>

@@ -55,7 +55,7 @@ var RuleObj = {
     },
     //开启｜关闭规则
     alterSwitch:function(id,status){
-        StorageObj.globalStorage.allRule[id].switch = status?"checked":"unchecked";
+        StorageObj.globalStorage.allRule[id].switch = (status?"checked":"unchecked");
         StorageObj.set(StorageObj.globalStorage);
     },
     //根据规则，判断是否需要加载数据
