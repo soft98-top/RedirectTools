@@ -76,7 +76,7 @@ var RuleObj = {
                 }else if(rule[i].reUrl.startsWith("json:")||rule[i].reUrl.startsWith("json：")||rule[i].reUrl.startsWith("js:")||rule[i].reUrl.startsWith("js：")){
                     allData = rule[i].reUrl.replace("json:","");
                     allData = allData.replace("json：","");
-                    allData = allData.replace("js：","");
+                    allData = allData.replace("js:","");
                     allData = allData.replace("js：","");
                     RuleObj.updateRuleData(i,allData);
                 }else{
