@@ -39,4 +39,10 @@ $(function(){
         var newAgent = $(this).val();
         Events.bg.AgentObj.set(newAgent);
     });
+    $("#setRule").on("click",function(){
+        Events.bg.LinkTool.openPage("options.html");
+    });
+    $("#useage").on("click",function(){
+        Events.bg.LinkTool.openPage("useage.html");
+    });
 });

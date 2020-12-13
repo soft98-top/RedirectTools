@@ -66,17 +66,19 @@ var RuleObj = {
         if(items.allRule != null){
             var rule = items.allRule;
             for(var i=0;i<rule.length;i++){
-                if(rule[i].reUrl.startsWith("js:")||rule[i].reUrl.startsWith("js：")||rule[i].reUrl.startsWith("jsonf:")||rule[i].reUrl.startsWith("jsonf：")){
-                    ruleUrl = rule[i].reUrl.replace("js:","");
-                    ruleUrl = ruleUrl.replace("js：","");
+                if(rule[i].reUrl.startsWith("jsf:")||rule[i].reUrl.startsWith("jsf：")||rule[i].reUrl.startsWith("jsonf:")||rule[i].reUrl.startsWith("jsonf：")){
+                    ruleUrl = rule[i].reUrl.replace("jsf:","");
+                    ruleUrl = ruleUrl.replace("jsf：","");
                     ruleUrl = ruleUrl.replace("jsonf:","");
                     ruleUrl = ruleUrl.replace("jsonf：","");
                     this.ruleData.push("");
                     RuleObj.ajaxRequest(i,ruleUrl);
-                }else if(rule[i].reUrl.startsWith("json:")||rule[i].reUrl.startsWith("json：")){
-                    jsonData = rule[i].reUrl.replace("json:","");
-                    jsonData = jsonData.replace("json：","");
-                    RuleObj.updateRuleData(i,jsonData);
+                }else if(rule[i].reUrl.startsWith("json:")||rule[i].reUrl.startsWith("json：")||rule[i].reUrl.startsWith("js:")||rule[i].reUrl.startsWith("js：")){
+                    allData = rule[i].reUrl.replace("json:","");
+                    allData = allData.replace("json：","");
+                    allData = allData.replace("js：","");
+                    allData = allData.replace("js：","");
+                    RuleObj.updateRuleData(i,allData);
                 }else{
                     this.ruleData.push("");
                 }
@@ -132,6 +134,12 @@ var LinkTool = {
                 }
             });
         }
+    },
+    //新建标签页打开插件指定页面
+    openPage:function(target){
+        chrome.tabs.create({"url":chrome.extension.getURL(target)},function(){
+            console.log(target);
+        });
     }
 }
 //------------------------------------------//
@@ -288,6 +296,9 @@ chrome.webRequest.onBeforeRequest.addListener(details => {
                         return {redirectUrl:"data:application/json;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])}
                     }
                     if(reData.startsWith("js:")||reData.startsWith("js：")){
+                        return {redirectUrl:"data:application/javascript;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])};
+                    }
+                    if(reData.startsWith("jsf:")||reData.startsWith("jsf：")){
                         return {redirectUrl:"data:application/javascript;charset=UTF-8;base64," + Base64.encode(RuleObj.ruleData[i])};
                     }
                     if(reData.startsWith("http:")||reData.startsWith("https:")){

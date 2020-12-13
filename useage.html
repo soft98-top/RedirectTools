@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用说明</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script type="text/javascript" src="js/jquery-3.5.1.js"></script>
+    <script type="text/javascript" src="js/bootstrap.bundle.js"></script>
+    <script type="text/javascript" src="js/bootstrap.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-8 offset-2">
+                
+                <div class="jumbotron">
+                    <h1>使用说明</h1>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                &#8194; &#8194; 最先开始安装完插件之后，是没有任何规则的，添加规则可以点击插件图标，在弹出的页面点击添加规则，会弹出添加规则的页面，进行添加，添加规则的格式下面会进行详细的说明。规则添加完毕之后，之后就可以点击插件图标对规则进行开关操作。弹出界面页面也可以切换UA，目前暂时不支持自定义UA。
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-8 offset-2">
+                <div>
+                    规则说明：
+                </div>
+                <div>
+                    &#8194; &#8194;原网址：希望被修改内容的网址
+                </div>
+                <div>
+                    &#8194; &#8194;重定向：修改之后的内容或包含修改后内容的网址
+                </div>
+                <div>
+                    &#8194; &#8194;&#8194; &#8194;1、json数据，以<code>json:</code>开头，后面跟随json格式数据，例如<code>json:{"code":1,"vip":1}</code>
+                </div>
+                <div>
+                    &#8194; &#8194;&#8194; &#8194;2、返回或包含json数据的网址，以<code>jsonf:</code>开头，后面跟随网址，例如<code>jsonf:http://127.0.0.1/1.json</code>
+                </div>
+                <div>
+                    &#8194; &#8194;&#8194; &#8194;3、js文件中的代码(不推荐，因为js文件一般内容很多)，以<code>js:</code>开头，后面跟随js文件中的内容<code>js:function checkUser(user){if(user.vip == 0)return false;return true;}</code>
+                </div>
+                <div>
+                    &#8194; &#8194;&#8194; &#8194;4、js文件网址，以<code>jsf:</code>开头，后面跟随js文件的网址<code>jsf:http://127.0.0.1/check.js</code>
+                </div>
+                <div>
+                    &#8194; &#8194;&#8194; &#8194;5、普通重定向，直接填写正常的网址即可。
+                </div>
+                <div>
+                    通过链接添加：
+                </div>
+                <div>
+                    &#8194; &#8194;以json格式的数据进行编写，格式如下，<code>url</code>代表的是原网址，<code>reUrl</code>代表的是重定向后的内容，根据上面的规则进行编写即可，<code>switch</code>是说明当前规则是否开启，默认即可，如果不想添加之后就开启，可以改为<code>unchecked</code>。
+                </div>
+                <div>
+                    &#8194; &#8194;在规则设置页面，在Link一栏输入<code>json:</code>加上编写的数据，或者直接输入可以返回这个格式数据的网址，然后点击通过链接添加即可。
+                </div>
+                <div>
+<pre>
+    {
+        "allRule":[
+            {
+                "url":"https://www.example.com/",
+                "reUrl":"https://www.baidu.com/",
+                "switch":"checked"
+            },{
+                "url":"https://www.example.com/1.js",
+                "reUrl":"jsf:http://127.0.0.1/1.js",
+                "switch":"checked"
+            }
+        ]
+    }
+</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
